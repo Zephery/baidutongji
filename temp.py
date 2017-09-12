@@ -1,5 +1,6 @@
 import json
 import time
+import logging
 import datetime
 import redis
 import urllib.parse
@@ -16,7 +17,17 @@ end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
 base_url = "https://api.baidu.com/json/tongji/v1/ReportService/getData"
 pool = redis.ConnectionPool(host='47.95.10.139', port=6379, password='root')  # TODO redis地址
 r = redis.Redis(connection_pool=pool)
-
+# logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    filename='myapp.log',
+                    filemode='w')
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 class Baidu(object):
     def __init__(self, siteId, username, password, token):
@@ -35,6 +46,7 @@ class Baidu(object):
         req = urllib.request.Request(base_url, data)
         response = urllib.request.urlopen(req)
         the_page = response.read()
+        logging.info("从百度返回结果")
         return the_page.decode("utf-8")
 
     def getPvUvAvgTime(self):  # 获取PV、UV、AvgTime
@@ -54,6 +66,7 @@ class Baidu(object):
         r.set("ip_count", ip_count)
         r.set("bounce_ratio", bounce_ratio)
         r.set("avg_visit_time", avg_visit_time)
+        logging.info("PV，UV，AvgTime")
 
     def getRukouYeMian(self):  # 前十入口页面
         result = self.getresult(start, end, "visit/landingpage/a",
@@ -70,8 +83,8 @@ class Baidu(object):
             temp["average_stay_time"] = item[2]
             tojson.append(temp)
             count = count + 1
-        json.dumps(tojson)
         r.set("rukouyemian", json.dumps(tojson[:5]))
+        logging.info("前十入口页面")
 
     def getAllSource(self):  # 获取所有来源
         result = self.getresult(start, end, "source/all/a",
@@ -88,7 +101,8 @@ class Baidu(object):
             tojson['visitor_count'] = item[2]
             count = count + 1
             detail.append(tojson)
-            r.set("source", json.dumps(detail))
+        r.set("source", json.dumps(detail))
+        logging.info("所有来源")
 
     def getDiYu(self):  # 地域
         result = self.getresult(start, end, "visit/district/a",
@@ -105,7 +119,8 @@ class Baidu(object):
             tojson['visitor_count'] = item[2]
             count = count + 1
             detail.append(tojson)
-            r.set("diyu", json.dumps(detail))
+        r.set("diyu", json.dumps(detail))
+        logging.info("地域")
 
     def getTopTen(self):  # 前十
         result = self.getresult(start, end, "visit/toppage/a",
@@ -122,8 +137,8 @@ class Baidu(object):
             temp["average_stay_time"] = item[2]
             tojson.append(temp)
             count = count + 1
-        json.dumps(tojson)
         r.set("top_ten", json.dumps(tojson[:5]))
+        logging.info("前十访问页面")
 
 
 if __name__ == '__main__':
