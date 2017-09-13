@@ -15,7 +15,6 @@ class Baidu(object):
         self.token = token
 
     def getresult(self, start_date, end_date, method, metrics):
-        base_url = "https://api.baidu.com/json/tongji/v1/ReportService/getData"
         body = {"header": {"account_type": 1, "password": self.password, "token": self.token,
                            "username": self.username},
                 "body": {"siteId": self.siteId, "method": method, "start_date": start_date,
