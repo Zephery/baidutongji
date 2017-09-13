@@ -10,7 +10,7 @@ import urllib.request
 start_date = time.strftime("%Y%m%d", time.localtime())
 today = datetime.date.today()
 yesterday = today - datetime.timedelta(days=1)
-fifteenago = today - datetime.timedelta(days=7)
+fifteenago = today - datetime.timedelta(days=11)
 print(str(yesterday).replace("-", ""), str(fifteenago).replace("-", ""))
 end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
 # 日期结束
@@ -29,6 +29,7 @@ formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
 console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
+
 class Baidu(object):
     def __init__(self, siteId, username, password, token):
         self.siteId = siteId
@@ -36,12 +37,14 @@ class Baidu(object):
         self.password = password
         self.token = token
 
-    def getresult(self, start_date, end_date, method, metrics):
+    def getresult(self, start_date, end_date, method, metrics, **kw):
         base_url = "https://api.baidu.com/json/tongji/v1/ReportService/getData"
         body = {"header": {"account_type": 1, "password": self.password, "token": self.token,
                            "username": self.username},
                 "body": {"siteId": self.siteId, "method": method, "start_date": start_date,
                          "end_date": end_date, "metrics": metrics}}
+        for key in kw:
+            body['body'][key] = kw[key]
         data = bytes(json.dumps(body), 'utf8')
         req = urllib.request.Request(base_url, data)
         response = urllib.request.urlopen(req)
@@ -69,8 +72,8 @@ class Baidu(object):
         logging.info("PV，UV，AvgTime")
 
     def getRukouYeMian(self):  # 前十入口页面
-        result = self.getresult(start, end, "visit/landingpage/a",
-                                "pv_count,visitor_count,avg_visit_time")
+        result = self.getresult(start, end, "source/all/a",
+                                "pv_count,visitor_count,avg_visit_time", viewType='visitor')
         data = json.loads(result)["body"]["data"][0]["result"]["items"]
         name = [item[0]['name'] for item in data[0]]
         count = 0
