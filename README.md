@@ -19,9 +19,25 @@
 
 百度统计提供了Tongji API的Java和Python版本，这两个版本及其复杂，可用性极低，所以，本人用Python写了个及其简单的通用版本，整体只有28行，代码在这，[https://github.com/Zephery/baidutongji](https://github.com/Zephery/baidutongji)。下面是具体过程
 
-## 1.API获取数据
+## 1.网站代码安装
+先在[百度统计]()中注册登录之后，进入管理页面，新增网站，然后在代码管理中获取安装代码，大部分人的代码都是类似的，除了hm.js?后面的参数，是记录该网站的唯一标识。
+```java
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e580b8db831811a4aaf4a8f3e30034dc";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+```
+同时，需要在申请其他设置->数据导出服务中开通数据导出服务，百度统计Tongji API可以为网站接入者提供便捷的获取网站流量数据的通道。
+![]()
+
+## 2.根据API获取数据
 [官网的API](https://tongji.baidu.com/dataapi/file/TongjiApiFile.pdf)详细的记录了接口的参数以及解释，
-链接：https://api.baidu.com/json/tongji/v1/ReportService/getData
+链接：[https://api.baidu.com/json/tongji/v1/ReportService/getData](https://api.baidu.com/json/tongji/v1/ReportService/getData),详细的官方报告请访问官网[TongjiApi](https://tongji.baidu.com/dataapi/file/TongjiApiFile.pdf "百度统计")
 所需参数（必须）：
 
 |  参数名称 | 参数类型  |描述   |
@@ -31,15 +47,39 @@
 |start_date|string|查询起始时间|
 |end_date|string|查询结束时间|
 |metrics|string|自定义指标|
+其中，参数start_date和end_date的规定为：yyyyMMdd，这里我们使用python的原生库，datetime、time，获取昨天的时间以及前七天的日期。
+```python
+start_date = time.strftime("%Y%m%d", time.localtime())
+today = datetime.date.today()
+yesterday = today - datetime.timedelta(days=1)
+fifteenago = today - datetime.timedelta(days=7)
+end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
+```
 
-详细的官方报告请访问官网[TongjiApi](https://tongji.baidu.com/dataapi/file/TongjiApiFile.pdf "百度统计")
+## 3.构建请求
+说明：siteId可以根据个人百度统计的链接获取，也可以使用Tongji API的第一个接口列表获取用户的站点列表。
+```python
+body={
+    "header": {
+        "account_type": 1,
+        "password": "password",
+        "token": "开通统计API的token",
+        "username": "用户名"
+    },
+    "body": {
+        "siteId": "域名id",
+        "method": "visit/district/a", # 地域访问
+        "start_date": start,
+        "end_date": end,
+        "metrics": "pv_count,visitor_count,avg_visit_time" #所需要的指标
+    }
+}
+```
+## 4.对获取的数据解析
+python中酷炫的语法
 
 
-
-
-
-
-百度统计python最简单版本
+## 5.完整代码
 ```python
 import json
 import time
@@ -76,21 +116,17 @@ if __name__ == '__main__':
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
     fifteenago = today - datetime.timedelta(days=7)
-    print(str(yesterday).replace("-", ""), str(fifteenago).replace("-", ""))
     end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
     # 日期结束
-    bd = Baidu(yousiteid, "your username", "your password", "your token")
+    bd = Baidu(yoursiteid, "username", "password", "token")
     result = bd.getresult(start, end, "overview/getTimeTrendRpt",
                           "pv_count,visitor_count,ip_count,bounce_ratio,avg_visit_time")
     result = json.loads(result)
     base = result["body"]["data"][0]["result"]["items"]
+    print(base)
+
 ```
 
-
-
-
-
-
-
-
-
+## 6.展示数据
+（1）PV、UV折线图
+（2）地域访问量

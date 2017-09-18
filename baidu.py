@@ -33,7 +33,6 @@ if __name__ == '__main__':
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
     fifteenago = today - datetime.timedelta(days=7)
-    print(str(yesterday).replace("-", ""), str(fifteenago).replace("-", ""))
     end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
     # 日期结束
     bd = Baidu(10879516, "ZepheryWen", "wenzhihuai2017", "bad4fda9a063476f2976c24416ec02ad")
@@ -42,4 +41,3 @@ if __name__ == '__main__':
     result = json.loads(result)
     base = result["body"]["data"][0]["result"]["items"]
     print(base)
-    date = base[0]
