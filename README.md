@@ -1,4 +1,25 @@
-# 百度统计
+### 谈谈个人网站的建立（四）—— 日志系统的建立 
+建立网站少不了日志系统，用来查看网站的各种流量，其中，最常用的方法还是使用ELK，但是，本网站的服务器配置实在太低了  
+ <center>
+ 
+ ![](http://ohlrxdl4p.bkt.clouddn.com/images/4f70486620170913090343.png)
+ 
+ </center>
+
+压根就跑不起ELK，所以只能使用其他方式，目前最常用的有[百度统计](https://tongji.baidu.com/web/welcome/login)和[友盟](https://www.umeng.com/)，这里，本人使用的是百度统计，提供了API给开发者使用，能够将自己所需要的图表移植到自己的网站上，
+
+
+
+
+
+
+
+
+
+
+
+
+
 百度统计python最简单版本
 ```python
 import json
@@ -45,3 +66,12 @@ if __name__ == '__main__':
     result = json.loads(result)
     base = result["body"]["data"][0]["result"]["items"]
 ```
+
+
+
+
+
+
+
+
+
