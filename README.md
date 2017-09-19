@@ -191,7 +191,6 @@ import urllib.request
 
 base_url = "https://api.baidu.com/json/tongji/v1/ReportService/getData"
 
-
 class Baidu(object):
     def __init__(self, siteId, username, password, token):
         self.siteId = siteId
@@ -212,7 +211,6 @@ class Baidu(object):
         response = urllib.request.urlopen(req)
         the_page = response.read()
         return the_page.decode("utf-8")
-
 
 if __name__ == '__main__':
     # 日期开始
@@ -366,7 +364,8 @@ jsp中的使用如下：
 
 
 # 结语  
-网上关于日志系统的几乎都是ELK，对于小网站的，隐私不是很重要的还是可以用用百度统计的，这套系统也折磨了我挺久的，特别是它那反人类的返回数据。最后，希望能在GitHub上给我个star吧。  
+网上关于日志系统的几乎都是ELK，对于小网站的，隐私不是很重要的还是可以用用百度统计的，这套系统也折磨了我挺久的，特别是它那反人类的返回数据。期初本来是想使用百度统计的，后来考虑了一下ELK，尝试之后发现，服务器配置跑不起来，还是安安稳稳的使用了百度统计，于此做成了这个系统，美观度还是不高，颜色需要优化一下。最后，希望能在GitHub上给我个star吧。  
+日志系统地址:[http://www.wenzhihuai.com/log.html](http://www.wenzhihuai.com/log.html)
 个人网站网址：[http://www.wenzhihuai.com](http://www.wenzhihuai.com)  
 个人网站代码地址：[https://github.com/Zephery/newblog](https://github.com/Zephery/newblog)  
 百度统计python代码地址：[https://github.com/Zephery/baidutongji](https://github.com/Zephery/baidutongji)  
