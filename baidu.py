@@ -14,12 +14,14 @@ class Baidu(object):
         self.password = password
         self.token = token
 
-    def getresult(self, start_date, end_date, method, metrics):
+    def getresult(self, start_date, end_date, method, metrics, **kw):
+        base_url = "https://api.baidu.com/json/tongji/v1/ReportService/getData"
         body = {"header": {"account_type": 1, "password": self.password, "token": self.token,
                            "username": self.username},
                 "body": {"siteId": self.siteId, "method": method, "start_date": start_date,
-                         "end_date": end_date,
-                         "metrics": metrics}}
+                         "end_date": end_date, "metrics": metrics}}
+        for key in kw:
+            body['body'][key] = kw[key]
         data = bytes(json.dumps(body), 'utf8')
         req = urllib.request.Request(base_url, data)
         response = urllib.request.urlopen(req)
