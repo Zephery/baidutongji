@@ -6,7 +6,7 @@
 
 </div>
 
-企业级的网站日志不能公开，但是我的是个人网站，用来跟大家一起学习的，所以，需要将百度的统计页面展示出来，但是，百度并不提供日志的图像，只提供API给开发者调用，而且还限制访问次数，一天不能超过2000次，这个对于实时统计来说，确实不够，所以只能展示前几天的访问统计。这里的日志系统分为三个步骤：1.API获取数据；2.存储数据；3.展示数据。页面效果如下：
+企业级的网站日志不能公开，但是我的是个人网站，用来跟大家一起学习的，所以，需要将百度的统计页面展示出来，但是，百度并不提供日志的图像，只提供API给开发者调用，而且还限制访问次数，一天不能超过2000次，这个对于实时统计来说，确实不够，所以只能展示前几天的访问统计。这里的日志系统分为三个步骤：1.API获取数据；2.存储数据；3.展示数据。页面效果如下，也可以点开我的网站的[日志系统](http://www.wenzhihuai.com/log.html):
 <div align="center">
 
 ![](http://ohlrxdl4p.bkt.clouddn.com/images/20170918090524.png)
@@ -21,7 +21,6 @@
 
 ## 1.网站代码安装
 先在[百度统计]()中注册登录之后，进入管理页面，新增网站，然后在代码管理中获取安装代码，大部分人的代码都是类似的，除了hm.js?后面的参数，是记录该网站的唯一标识。
-
 ```html
 <script>
 var _hmt = _hmt || [];
@@ -33,7 +32,6 @@ var _hmt = _hmt || [];
 })();
 </script>
 ```
-
 同时，需要在申请其他设置->数据导出服务中开通数据导出服务，百度统计Tongji API可以为网站接入者提供便捷的获取网站流量数据的通道。
 <div align="center">
 
@@ -60,11 +58,10 @@ var _hmt = _hmt || [];
 
 其中，参数start_date和end_date的规定为：yyyyMMdd，这里我们使用python的原生库，datetime、time，获取昨天的时间以及前七天的日期。
 ```python
-start_date = time.strftime("%Y%m%d", time.localtime())
-today = datetime.date.today()
-yesterday = today - datetime.timedelta(days=1)
-fifteenago = today - datetime.timedelta(days=7)
-end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
+today = datetime.date.today()   # 获取今天的日期
+yesterday = today - datetime.timedelta(days=1) # 获取昨天的日期
+fifteenago = today - datetime.timedelta(days=7) # 获取前七天的日期
+end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")  # 格式化成yyyyMMdd格式
 ```
 
 ## 3.构建请求
@@ -91,7 +88,7 @@ class Baidu(object):
         the_page = response.read()
         return the_page.decode("utf-8")
 ```
-至此，python获取百度统计的过程基本就没了，没错，就是那么简简单单的几行，完整代码见[https://github.com/Zephery/baidutongji](https://github.com/Zephery/baidutongji)，但是，想要实现获取各种数据，仍需要做很多工作。
+至此，python获取百度统计的过程基本就没了，没错，就是那么简简单单的几行，完整代码见[https://github.com/Zephery/baidutongji/blob/master/baidu.py](https://github.com/Zephery/baidutongji/blob/master/baidu.py)，但是，想要实现获取各种数据，仍需要做很多工作。
 
 ## 4.实际运用
 （1）需要使用其他参数怎么办
@@ -104,6 +101,18 @@ class Baidu(object):
 python中提供了个可变参数来解决这一烦恼，详细请看[http://www.jianshu.com/p/98f7e34845b5](http://www.jianshu.com/p/98f7e34845b5)
 
 （2）获取的数据如何解析
+百度统计返回的结果比较简洁而又反人类，以获取概览中的pv_count,visitor_count,ip_count,bounce_ratio,avg_visit_time为例子：
+```python
+    result = bd.getresult(start, end, "overview/getTimeTrendRpt",
+                          "pv_count,visitor_count,ip_count,bounce_ratio,avg_visit_time")
+```
+返回的结果是：
+```html
+[[['2017/09/12'], ['2017/09/13'], ['2017/09/14'], ['2017/09/15'], ['2017/09/16'], ['2017/09/17'], ['2017/09/18']], [[422, 76, 76, 41.94, 221], [284, 67, 65, 50.63, 215], [67, 23, 22, 52.17, 153], [104, 13, 13, 36.36, 243], [13, 4, 4, 33.33, 66], [73, 7, 6, 37.5, 652], [63, 11, 11, 33.33, 385]], [], []]
+```
+即：
+[[]]
+
 
 （3）每周限制2000次
 在开通数据导出服务的时候，不知道大家有没有注意到它的说明，即我们是不能实时监控的，只能将它放在临时数据库中，这里我们选择了Redis，并在centos里定义一个定时任务，每天全部更新一次即可。
@@ -137,7 +146,6 @@ for item in data[1]:
     count = count + 1
 r.set("rukouyemian", json.dumps(tojson[:5]))
 ```
-
 ## 5.完整代码
 ```python
 import json

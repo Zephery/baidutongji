@@ -31,7 +31,6 @@ class Baidu(object):
 
 if __name__ == '__main__':
     # 日期开始
-    start_date = time.strftime("%Y%m%d", time.localtime())
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
     fifteenago = today - datetime.timedelta(days=7)
