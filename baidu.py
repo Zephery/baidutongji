@@ -36,7 +36,7 @@ if __name__ == '__main__':
     fifteenago = today - datetime.timedelta(days=7)
     end, start = str(yesterday).replace("-", ""), str(fifteenago).replace("-", "")
     # 日期结束
-    bd = Baidu(10879516, "ZepheryWen", "wenzhihuai2017", "bad4fda9a063476f2976c24416ec02ad")
+    bd = Baidu(yoursiteid, "ZepheryWen", "your password", "your token")
     result = bd.getresult(start, end, "overview/getTimeTrendRpt",
                           "pv_count,visitor_count,ip_count,bounce_ratio,avg_visit_time")
     result = json.loads(result)
