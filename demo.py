@@ -144,7 +144,7 @@ class Baidu(object):
 
 
 if __name__ == '__main__':
-    bd = Baidu(10879516, "ZepheryWen", "wenzhihuai2017", "bad4fda9a063476f2976c24416ec02ad")
+    bd = Baidu(yoursiteid, "your usernmae", "your password", "token")
     bd.getPvUvAvgTime()
     bd.getRukouYeMian()
     bd.getAllSource()
