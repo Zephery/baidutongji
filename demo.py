@@ -62,12 +62,12 @@ class Baidu(object):
         ip_count = [x[2] if x[2] != '--' else 0 for x in result[1]]
         bounce_ratio = [x[3] if x[3] != '--' else 0 for x in result[1]]
         avg_visit_time = [round(x[4] / 60, 2) if x[4] != '--' else 0 for x in result[1]]
-        r.set("daterange", daterange)
-        r.set("pv_count", pv_count)
-        r.set("visitor_count", visitor_count)
-        r.set("ip_count", ip_count)
-        r.set("bounce_ratio", bounce_ratio)
-        r.set("avg_visit_time", avg_visit_time)
+        r.set("daterange", str(daterange))
+        r.set("pv_count", str(pv_count))
+        r.set("visitor_count", str(visitor_count))
+        r.set("ip_count", str(ip_count))
+        r.set("bounce_ratio", str(bounce_ratio))
+        r.set("avg_visit_time", str(avg_visit_time))
         logging.info("PV，UV，AvgTime")
 
     def getRukouYeMian(self):  # 前十入口页面
